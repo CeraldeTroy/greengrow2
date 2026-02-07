@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GreenGrow - Plant Marketplace</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="animations.css" />
+</head>
+<body class="home">
+  <!-- Background video layer (falls back to .bg-layer if video not available) -->
+  <video class="bg-video" autoplay muted loop playsinline poster="assets/bg-poster.jpg">
+    <source src="C:\Users\geela\greengrow\GreenGrow\Free Waterfall 4k Videoclip _ Nature Videos _ Youstock.mp4" type="video/mp4" />
+  </video>
+
+  <!-- Background layer fallback / paralax overlay -->
+  <div class="bg-layer" style="background-image: url('assets/bg-poster.jpg'); background-size: cover; background-position: center; background-attachment: fixed;"></div>
+  
+  <!-- Overlay for better text readability -->
+  <div class="bg-overlay"></div>
+
+  <!-- Plant Loading Animation -->
+  <div class="plant-loader" id="plantLoader">
+    <div class="plant-container">
+      <div class="pot"></div>
+      <div class="soil"></div>
+      <div class="stem stem-1"></div>
+      <div class="stem stem-2"></div>
+      <div class="stem stem-3"></div>
+      <div class="leaf leaf-1"></div>
+      <div class="leaf leaf-2"></div>
+      <div class="leaf leaf-3"></div>
+      <div class="leaf leaf-4"></div>
+    </div>
+    <p class="loading-text">Growing...</p>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <img src="C:\Users\geela\greengrow\GreenGrow\IMG_20260124_204536.jpg" alt="GreenGrow" class="logo-img" />
+        <span class="logo-text">GreenGrow</span>
+      </div>
+      <div class="nav-spacer"></div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <div class="hero-wrapper">
+    <div class="hero-card">
+      <div class="hero-decor"></div>
+
+      
+      <p class="tagline">Grow greener. Act together for forests and climate.</p>
+
+      <p class="hero-description">Join our thriving community of sustainable growers and make a real impact on the environment. Connect, share, and grow together.</p>
+
+      <div class="actions">
+        <a class="btn btn-primary" href="login.html">
+          <span class="btn-icon"></span> Login
+        </a>
+        <a class="btn btn-secondary" href="register.html">
+          <span class="btn-icon"></span> Register
+        </a>
+      </div>
+
+      <div class="feature-badges">
+        <div class="badge">
+          <span class="badge-icon">🌱</span>
+          <span>Sustainable</span>
+        </div>
+        <div class="badge">
+          <span class="badge-icon">🌍</span>
+          <span>Global Community</span>
+        </div>
+        <div class="badge">
+          <span class="badge-icon">♻️</span>
+          <span>Eco-Friendly</span>
+        </div>
+      </div>
+
+      <p class="auth-note">New to GreenGrow? Create an account and start your green journey today!</p>
+    </div>
+
+    <!-- Floating Plants -->
+    <div class="floating-plants">
+      <div class="floating-plant plant-1">🪴</div>
+      <div class="floating-plant plant-2">🌿</div>
+      <div class="floating-plant plant-3">🌸</div>
+      <div class="floating-plant plant-4">🍃</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="landing-footer">
+    <div class="footer-container">
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // Hide loader after page loads
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('plantLoader');
+      setTimeout(() => {
+        loader.classList.add('fade-out');
+        setTimeout(() => loader.style.display = 'none', 500);
+      }, 1500);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login - GreenGrow</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="animations.css" />
+</head>
+<body>
+  <div class="bg-layer"></div>
+
+  <!-- Right-aligned auth panel with entrance animation -->
+  <div class="auth-panel" role="main" aria-labelledby="authTitle">
+    <div class="auth-card card form-card">
+      <div class="auth-brand">
+        <div class="leaf"></div>
+        <div>
+          <h1 id="authTitle" class="brand-small">GreenGrow</h1>
+          <div class="tagline-small">Grow greener. Start here.</div>
+        </div>
+      </div>
+
+      <h2 class="auth-heading">Welcome back</h2>
+
+      <form id="loginForm" novalidate>
+        <label>Email
+          <input type="email" id="loginEmail" required />
+        </label>
+        <label>Password
+          <input type="password" id="loginPassword" required />
+        </label>
+
+        <div class="form-row">
+          <button class="btn" type="submit">Login</button>
+          <a class="link" href="register.html">Register</a>
+        </div>
+        <div id="loginMsg" class="msg"></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

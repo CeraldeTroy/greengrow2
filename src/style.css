@@ -1,0 +1,318 @@
+/* Core visual style for GreenGrow - single file for simplicity */
+
+/* Basic reset */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: Inter, system-ui, Arial, sans-serif; }
+html,body { height:100%; }
+
+body {
+  display:flex;
+  min-height:100vh;
+  background: linear-gradient(180deg,#ecf8ef 0%, #f6fbf6 100%);
+}
+
+/* subtle background animation layer (no images) */
+.bg-layer{
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(135deg, rgba(12,80,30,0.06), rgba(5,60,20,0.02));
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* floating mist using pseudo elements via JS-friendly CSS variables */
+.bg-layer::before, .bg-layer::after {
+  content: "";
+  position: absolute;
+  width: 50vmax;
+  height: 50vmax;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.08;
+  transform: translate(-10%, -20%);
+  background: radial-gradient(circle at 30% 30%, rgba(20,120,60,0.25), transparent 30%);
+}
+.bg-layer::after {
+  right: -10%;
+  bottom: -10%;
+  transform: translate(10%, 20%);
+  background: radial-gradient(circle at 70% 70%, rgba(120,150,80,0.14), transparent 30%);
+}
+
+/* Cards and layout */
+.card, .container { background: rgba(255,255,255,0.9); border-radius: 12px; box-shadow: 0 6px 20px rgba(10,30,10,0.08); padding: 28px; max-width: 960px; width: 100%; }
+
+.center { text-align:center; max-width:520px; padding:36px; }
+
+.brand { color: #1b5e20; font-size: 3rem; letter-spacing: -1px; margin-bottom:8px; }
+.tagline { color:#265b2f; margin-bottom:20px; }
+
+.actions { display:flex; gap:12px; justify-content:center; margin-bottom:12px; }
+.btn { background:#2e7d32; color:#fff; padding:10px 18px; border-radius:8px; text-decoration:none; display:inline-block; transition:transform .18s ease, box-shadow .18s ease; border: none; cursor:pointer; }
+.btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(46,125,50,0.18); }
+.btn.outline, .btn.outline:hover { background:transparent; color:#2e7d32; box-shadow:none; border:1px solid rgba(46,125,50,0.14); }
+
+.small { font-size:0.85rem; color:#355c3f; }
+.link { color:#2e7d32; text-decoration:none; font-size:0.9rem; margin-left:12px; }
+
+.form-card { max-width:420px; width:100%; }
+label { display:block; margin:12px 0; color:#234a2a; font-weight:600; font-size:0.95rem; }
+input { display:block; width:100%; padding:10px 12px; margin-top:6px; border-radius:8px; border:1px solid #dfefe0; background: #fbfefb; }
+
+.form-row { display:flex; align-items:center; gap:12px; margin-top:14px; }
+.msg { margin-top:10px; font-size:0.95rem; color:#2e6b2e; min-height:1.1em; }
+
+/* Dashboard layout */
+.container { max-width:1200px; padding:20px; }
+.dash-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+.dash-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; }
+.list { list-style:none; padding:8px 0; }
+.list li, .list .item { background:rgba(12,60,20,0.03); padding:8px 10px; border-radius:8px; margin:8px 0; display:flex; justify-content:space-between; align-items:center; }
+.center { text-align:center; }
+
+/* additional admin navbar & dashboard styles */
+
+.topbar {
+  position: sticky; top: 0; z-index: 40;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:12px 20px; width:100%;
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 4px 18px rgba(10,30,10,0.06);
+}
+.brand { font-weight:700; color:#1b5e20; font-size:1.15rem; display:flex; align-items:center; gap:8px; }
+.brand .tag { font-weight:600; font-size:0.8rem; color:#3b6b3b; }
+.nav { display:flex; gap:8px; align-items:center; }
+.nav-btn { background:transparent; border:none; padding:8px 12px; border-radius:8px; color:#234a2a; cursor:pointer; transition:background .18s; }
+.nav-btn.active { background: rgba(46,125,50,0.12); }
+.profile { position:relative; }
+.profile-menu {
+  position:absolute; right:0; top:44px; background:white; border-radius:8px; padding:8px; box-shadow:0 8px 22px rgba(0,0,0,0.08);
+  min-width:200px; display:flex; flex-direction:column; gap:6px;
+}
+.profile-menu.hidden { display:none; }
+.menu-item { background:transparent; border:none; text-align:left; padding:8px; cursor:pointer; color:#265b2f; }
+.menu-item:hover { background:rgba(46,125,50,0.06); border-radius:6px; }
+
+.dashboard { max-width:1200px; margin:22px auto; padding:0 20px 60px; }
+.panel { margin-bottom:18px; }
+.overview-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; align-items:stretch; }
+.stat { text-align:center; padding:18px; }
+.stat h3 { font-size:1.8rem; color:#2e7d32; margin-bottom:6px; }
+.chart { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:18px; }
+.chart-legend { margin-top:10px; display:flex; flex-direction:column; gap:6px; }
+.legend-item { display:flex; align-items:center; gap:8px; }
+.legend-item .swatch { width:14px; height:14px; border-radius:3px; display:inline-block; }
+
+.list.card { padding:12px; }
+.item { display:flex; align-items:center; justify-content:space-between; padding:10px; border-radius:8px; background:rgba(12,60,20,0.03); margin-bottom:8px; }
+
+.form-inline { display:flex; gap:8px; align-items:center; }
+.form-inline input { flex:1; padding:8px 10px; }
+.hidden { display:none; }
+
+/* New sidebar + large dashboard styles (append or replace where needed) */
+
+/* Layout */
+body { display:flex; min-height:100vh; background: linear-gradient(180deg,#ecf8ef 0%, #f6fbf6 100%); }
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 260px;
+  min-width: 220px;
+  padding: 20px;
+  background: rgba(255,255,255,0.92);
+  box-shadow: 10px 0 30px rgba(6,20,10,0.03);
+  z-index: 40;
+}
+.sidebar-top { display:flex; gap:12px; align-items:center; }
+.avatar { width:54px; height:54px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(135deg,#7bbf77,#2e7d32); color:white; font-weight:700; font-size:1.1rem; }
+.who .hello { font-size:0.85rem; color:#355c3f; }
+.who .name { font-weight:700; color:#1b5e20; }
+.who .role { font-weight:600; color:#3b6b3b; font-size:0.85rem; }
+
+/* Side nav */
+.side-nav { display:flex; flex-direction:column; gap:8px; margin-top:6px; }
+.nav-link { padding:10px 12px; border-radius:8px; color:#23502f; text-decoration:none; cursor:pointer; display:block; transition:background .15s; }
+.nav-link:hover { background: rgba(46,125,50,0.06); }
+.nav-link.active { background: linear-gradient(90deg, rgba(46,125,50,0.12), rgba(34,90,30,0.06)); font-weight:700; }
+
+/* Main area */
+.mainwide { flex:1; padding:28px; overflow:auto; }
+.main-header { margin-bottom:18px; }
+.page-title { font-size:1.6rem; color:#1b5e20; margin-bottom:6px; }
+.page-sub { color:#3b6b3b; margin-bottom:4px; }
+
+/* Larger overview grid */
+.overview-grid.big { display:grid; grid-template-columns: repeat(3, 1fr) 420px; gap:18px; align-items:stretch; margin-bottom:16px; }
+.stat { text-align:center; padding:22px; border-radius:12px; }
+.stat h3 { font-size:2.2rem; color:#2e7d32; margin-bottom:6px; }
+.chart { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:18px; border-radius:12px; }
+
+/* recent activity */
+.recent { padding:18px; border-radius:12px; }
+
+/* responsive */
+@media (max-width:960px) {
+  .sidebar { position:relative; width:100%; min-width:0; box-shadow:none; border-right:none; }
+  .mainwide { margin-left:0; padding: 18px; }
+  .overview-grid.big { grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); }
+}
+
+/* small responsive fix */
+@media (max-width:760px) { .nav { display:none; } .topbar { padding:12px; } }
+/* Responsive tweaks */
+@media (max-width:640px) {
+  .brand { font-size:2.2rem; }
+  .card, .container { padding:18px; }
+}
+
+/* ensure content fits big desktops */
+@media (min-width:1400px) {
+  .mainwide { margin-left: 300px; padding:40px 60px; }
+}
+
+/* subtle entrance animation */
+.card { transform-origin:center; animation: fadeIn .36s ease both; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(8px) scale(.995); } to { opacity:1; transform:none; } }
+
+/* Toast item style (used by script.js) */
+#gg_toast { display:flex; flex-direction:column; align-items:flex-end; }
+.gg_toast_item { font-size:0.95rem; }
+
+ /* ----------------------
+    Auth panel: right-side box, nature accents
+    ---------------------- */
+
+.auth-panel {
+  position: fixed;
+  right: 48px;                 /* slightly closer to edge */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 340px;               /* reduced width */
+  max-width: calc(100% - 80px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-card {
+  width: 100%;
+  padding: 20px;              /* reduced padding */
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(250,255,250,0.96));
+  box-shadow: 0 14px 40px rgba(16,48,18,0.12);
+  border-left: 6px solid rgba(46,125,50,0.12);
+}
+
+/* small brand inside the auth card */
+.auth-brand { display:flex; gap:12px; align-items:center; margin-bottom:10px; }
+.brand-small { font-size:1.15rem; color:#1b5e20; margin:0; }
+.tagline-small { font-size:0.85rem; color:#35603b; }
+
+/* decorative leaf square (no image) */
+.auth-brand .leaf {
+  width:46px; height:46px; border-radius:10px;
+  background: linear-gradient(135deg,#7bbf77,#2e7d32);
+  box-shadow: inset 0 -6px 18px rgba(0,0,0,0.06);
+  display:flex; align-items:center; justify-content:center; color:white; font-weight:700;
+  font-size:1.05rem;
+  flex-shrink:0;
+}
+
+/* auth heading */
+.auth-heading { margin:6px 0 12px 0; color:#234a2a; font-size:1.1rem; }
+
+/* form tweaks inside auth card */
+.auth-card label { font-weight:600; color:#234a2a; }
+.auth-card input { background: #fbfefb; border:1px solid #e6f3e6; padding:10px; }
+
+/* balance on small screens: center the auth box */
+@media (max-width:960px) {
+  .auth-panel { position:relative; right:auto; top:auto; transform:none; margin: 26px auto; width:92%; }
+  .mainwide { margin-left: 0; padding: 18px; }
+}
+
+/* subtle focus states */
+.auth-card input:focus { outline: none; box-shadow: 0 6px 18px rgba(46,125,50,0.06); border-color: rgba(46,125,50,0.18); }
+
+/* Home (landing) specific layout and nature styling */
+body.home {
+  /* keep other pages unaffected by using a page-scoped class */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  min-height: 100vh;
+  background: linear-gradient(180deg,#eaf7ee 0%, #f6fbf6 60%); /* slightly brighter for hero */
+}
+
+/* larger, balanced hero card */
+.hero-card {
+  max-width: 700px;           /* reduced max width */
+  width: 100%;
+  padding: 36px;              /* reduced padding */
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,255,245,0.98));
+  border: 1px solid rgba(40,120,40,0.04);
+  box-shadow: 0 18px 50px rgba(10,30,10,0.08);
+  text-align: center;
+}
+
+/* subtle decorative leaf arc in the hero */
+.hero-decor {
+  position: absolute;
+  left: -8%;
+  top: -16%;
+  width: 52vmin;
+  height: 52vmin;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(34,120,40,0.06), transparent 30%),
+              radial-gradient(circle at 70% 70%, rgba(90,140,70,0.04), transparent 30%);
+  filter: blur(28px);
+  transform: rotate(-12deg);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* bring content above decorative element */
+.hero-card > * { position: relative; z-index: 1; }
+
+/* stronger brand for hero */
+.hero-card .brand {
+  font-size: 3.6rem;
+  color: #184f20;
+  margin-bottom: 6px;
+  letter-spacing: -1px;
+}
+.hero-card .tagline {
+  font-size: 1.05rem;
+  color: #2a5d34;
+  margin-bottom: 20px;
+}
+
+/* buttons slightly larger for hero */
+.hero-card .btn { padding: 12px 20px; font-size: 1rem; border-radius: 10px; }
+.hero-card .btn.outline { border-width: 1px; }
+
+/* small copyright/footer spacing */
+.hero-card footer { margin-top: 18px; color: #3b6b3b; }
+
+/* responsive tweaks for hero */
+@media (max-width: 960px) {
+  .hero-card { padding: 26px; border-radius: 12px; width: 92%; }
+  .hero-card .brand { font-size: 2.4rem; }
+  .auth-panel { right: 20px; } /* keep auth panel usable on smaller screens */
+}
+
+@media (max-width: 520px) {
+  .hero-decor { display: none; }
+  .hero-card .brand { font-size: 2rem; }
+}

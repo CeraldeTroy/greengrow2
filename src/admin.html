@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Overview</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="animations.css" />
+</head>
+<body>
+  <div class="bg-layer"></div>
+
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="avatar">G</div>
+      <div class="who">
+        <div class="hello">Hello</div>
+        <div class="name">Geeland <span class="role">/ Admin</span></div>
+      </div>
+    </div>
+
+    <nav class="side-nav">
+      <a class="nav-link active" href="admin.html">Overview</a>
+      <a class="nav-link" href="dashboard.html">Monitoring</a>
+      <a class="nav-link" href="verification.html">Verification Approval</a>
+      <a class="nav-link" href="profile.html">Personal Info</a>
+      <a class="nav-link" href="password.html">Password Management</a>
+      <a class="nav-link" href="index.html">Logout</a>
+    </nav>
+
+    <div class="sidebar-bottom small">GreenGrow Admin</div>
+  </aside>
+
+  <main class="mainwide">
+    <header class="main-header">
+      <h1 class="page-title">Overview</h1>
+      <p class="page-sub">Summary of buyers, sellers and recent orders</p>
+    </header>
+
+    <section class="overview-grid big">
+      <div class="stat card">
+        <h3 id="stat-users">0</h3>
+        <p>Users</p>
+      </div>
+      <div class="stat card">
+        <h3 id="stat-sellers">0</h3>
+        <p>Sellers</p>
+      </div>
+      <div class="stat card">
+        <h3 id="stat-orders">0</h3>
+        <p>Orders</p>
+      </div>
+
+      <div class="chart card">
+        <canvas id="pieChart" width="360" height="360" aria-label="Buyer vs Seller chart"></canvas>
+        <div id="chartLegend" class="chart-legend"></div>
+      </div>
+    </section>
+
+    <section class="card recent">
+      <h3>Recent Activity</h3>
+      <div id="recentList" class="list"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
