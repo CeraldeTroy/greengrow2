@@ -254,32 +254,20 @@ body.home {
 
 /* larger, balanced hero card */
 .hero-card {
-  max-width: 700px;           /* reduced max width */
+  max-width: 100%;
   width: 100%;
-  padding: 36px;              /* reduced padding */
-  border-radius: 16px;
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,255,245,0.98));
-  border: 1px solid rgba(40,120,40,0.04);
-  box-shadow: 0 18px 50px rgba(10,30,10,0.08);
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
 /* subtle decorative leaf arc in the hero */
 .hero-decor {
-  position: absolute;
-  left: -8%;
-  top: -16%;
-  width: 52vmin;
-  height: 52vmin;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(34,120,40,0.06), transparent 30%),
-              radial-gradient(circle at 70% 70%, rgba(90,140,70,0.04), transparent 30%);
-  filter: blur(28px);
-  transform: rotate(-12deg);
-  pointer-events: none;
-  z-index: 0;
+  display: none;
 }
 
 /* bring content above decorative element */
@@ -287,15 +275,19 @@ body.home {
 
 /* stronger brand for hero */
 .hero-card .brand {
-  font-size: 3.6rem;
-  color: #184f20;
-  margin-bottom: 6px;
+  font-size: 5.5rem;
+  color: #fff;
+  margin-bottom: 20px;
   letter-spacing: -1px;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.4), 0 0 15px rgba(30,150,60,0.3);
+  font-weight: 800;
 }
 .hero-card .tagline {
-  font-size: 1.05rem;
-  color: #2a5d34;
+  font-size: 1.4rem;
+  color: #fff;
   margin-bottom: 20px;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+  font-weight: 500;
 }
 
 /* buttons slightly larger for hero */
@@ -307,12 +299,11 @@ body.home {
 
 /* responsive tweaks for hero */
 @media (max-width: 960px) {
-  .hero-card { padding: 26px; border-radius: 12px; width: 92%; }
-  .hero-card .brand { font-size: 2.4rem; }
+  .hero-card { padding: 0; border-radius: 0; width: 100%; }
+  .hero-card .brand { font-size: 4.2rem; }
   .auth-panel { right: 20px; } /* keep auth panel usable on smaller screens */
 }
 
 @media (max-width: 520px) {
-  .hero-decor { display: none; }
-  .hero-card .brand { font-size: 2rem; }
+  .hero-card .brand { font-size: 3.2rem; }
 }
