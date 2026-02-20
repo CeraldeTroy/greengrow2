@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin — Overview</title>
+  <title>Admin Dashboard — GreenGrow</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="animations.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="bg-layer"></div>
@@ -15,54 +16,302 @@
       <div class="avatar">G</div>
       <div class="who">
         <div class="hello">Hello</div>
-        <div class="name">Geeland <span class="role">/ Admin</span></div>
+        <div class="name">Admin <span class="role">/ Dashboard</span></div>
       </div>
     </div>
 
     <nav class="side-nav">
-      <a class="nav-link active" href="admin.html">Overview</a>
-      <a class="nav-link" href="dashboard.html">Monitoring</a>
-      <a class="nav-link" href="verification.html">Verification Approval</a>
-      <a class="nav-link" href="profile.html">Personal Info</a>
-      <a class="nav-link" href="password.html">Password Management</a>
-      <a class="nav-link" href="index.html">Logout</a>
+      <a class="nav-link active" href="admin.html" data-page="overview">📊 Dashboard Overview</a>
+      <a class="nav-link" href="#users" data-page="users">👥 User Management</a>
+      <a class="nav-link" href="#listings" data-page="listings">🌿 Listing Management</a>
+      <a class="nav-link" href="#orders" data-page="orders">📦 Order Tracking</a>
+      <a class="nav-link" href="#analytics" data-page="analytics">📈 Reports & Analytics</a>
+      <a class="nav-link" href="#settings" data-page="settings">⚙️ Settings</a>
+      <a class="nav-link" href="profile.html">👤 Personal Info</a>
+      <a class="nav-link" href="password.html">🔐 Password</a>
+      <a class="nav-link" href="index.html">🚪 Logout</a>
     </nav>
 
-    <div class="sidebar-bottom small">GreenGrow Admin</div>
+    <div class="sidebar-bottom small">GreenGrow Admin Panel v1.0</div>
   </aside>
 
   <main class="mainwide">
-    <header class="main-header">
-      <h1 class="page-title">Overview</h1>
-      <p class="page-sub">Summary of buyers, sellers and recent orders</p>
-    </header>
+    <!-- OVERVIEW PAGE -->
+    <section id="overview-page" class="dashboard-page active">
+      <header class="main-header">
+        <h1 class="page-title">📊 Dashboard Overview</h1>
+        <p class="page-sub">Key statistics and recent activity</p>
+      </header>
 
-    <section class="overview-grid big">
-      <div class="stat card">
-        <h3 id="stat-users">0</h3>
-        <p>Users</p>
-      </div>
-      <div class="stat card">
-        <h3 id="stat-sellers">0</h3>
-        <p>Sellers</p>
-      </div>
-      <div class="stat card">
-        <h3 id="stat-orders">0</h3>
-        <p>Orders</p>
-      </div>
+      <section class="overview-grid big">
+        <div class="stat card">
+          <h3 id="stat-users">0</h3>
+          <p>Total Users</p>
+        </div>
+        <div class="stat card">
+          <h3 id="stat-sellers">0</h3>
+          <p>Active Sellers</p>
+        </div>
+        <div class="stat card">
+          <h3 id="stat-orders">0</h3>
+          <p>Total Orders</p>
+        </div>
 
-      <div class="chart card">
-        <canvas id="pieChart" width="360" height="360" aria-label="Buyer vs Seller chart"></canvas>
-        <div id="chartLegend" class="chart-legend"></div>
+        <div class="chart card">
+          <h3 style="text-align: center; width: 100%; margin-bottom: 16px; color: #1b5e20; font-weight: 700;">👥 Users vs Sellers Distribution</h3>
+          <canvas id="pieChart" width="300" height="300"></canvas>
+          <div id="chartLegend" class="chart-legend"></div>
+        </div>
+      </section>
+
+      <section class="chart card">
+        <h3 style="margin-bottom: 20px; color: #1b5e20; font-weight: 700;">📈 Sales & Activity Trend</h3>
+        <canvas id="barChart" width="400" height="200"></canvas>
+      </section>
+
+      <section class="card recent">
+        <h3>⏱️ Recent Activity</h3>
+        <div id="recentList" class="list"></div>
+      </section>
+    </section>
+
+    <!-- USER MANAGEMENT PAGE -->
+    <section id="users-page" class="dashboard-page">
+      <header class="main-header">
+        <h1 class="page-title">👥 User Management</h1>
+        <p class="page-sub">Manage all users, deactivate/activate accounts</p>
+      </header>
+
+      <div class="card">
+        <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;">
+          <input type="text" id="userSearch" placeholder="Search users by name or email..." style="flex: 1; min-width: 250px;">
+          <button class="btn search-users-btn" style="white-space: nowrap;">🔍 Search</button>
+        </div>
+        <div style="overflow-x: auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersTable">
+              <tr>
+                <td>1</td>
+                <td>user1@example.com</td>
+                <td>John Doe</td>
+                <td><span class="badge-active">Active</span></td>
+                <td><button class="btn-sm deactivate-btn" data-email="user1@example.com">Deactivate</button></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>user2@example.com</td>
+                <td>Jane Smith</td>
+                <td><span class="badge-active">Active</span></td>
+                <td><button class="btn-sm deactivate-btn" data-email="user2@example.com">Deactivate</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
-    <section class="card recent">
-      <h3>Recent Activity</h3>
-      <div id="recentList" class="list"></div>
+    <!-- LISTING MANAGEMENT PAGE -->
+    <section id="listings-page" class="dashboard-page">
+      <header class="main-header">
+        <h1 class="page-title">🌿 Listing Management</h1>
+        <p class="page-sub">Approve, edit, or remove plant listings</p>
+      </header>
+
+      <div class="card">
+        <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;">
+          <select style="max-width: 250px;">
+            <option>All Listings</option>
+            <option>Pending Approval</option>
+            <option>Approved</option>
+            <option>Rejected</option>
+          </select>
+          <button class="btn">🔍 Filter</button>
+        </div>
+        <div style="overflow-x: auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Plant Name</th>
+                <th>Seller</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="listingsTable">
+              <tr>
+                <td>1</td>
+                <td>Rose Plant</td>
+                <td>seller1@example.com</td>
+                <td><span class="badge-pending">Pending</span></td>
+                <td><button class="btn-sm approved">✓ Approve</button> <button class="btn-sm">✕ Reject</button></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Succulent</td>
+                <td>seller2@example.com</td>
+                <td><span class="badge-active">Approved</span></td>
+                <td><button class="btn-sm">✎ Edit</button> <button class="btn-sm">✕ Remove</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ORDER TRACKING PAGE -->
+    <section id="orders-page" class="dashboard-page">
+      <header class="main-header">
+        <h1 class="page-title">📦 Order Tracking</h1>
+        <p class="page-sub">Monitor transactions and order statuses</p>
+      </header>
+
+      <div class="card">
+        <div style="overflow-x: auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTable">
+              <tr>
+                <td>#001</td>
+                <td>John Doe</td>
+                <td>Rose Plant</td>
+                <td>$25.99</td>
+                <td><span class="badge-active">Delivered</span></td>
+                <td><button class="btn-sm">👁 View</button></td>
+              </tr>
+              <tr>
+                <td>#002</td>
+                <td>Jane Smith</td>
+                <td>Succulent</td>
+                <td>$15.99</td>
+                <td><span class="badge-pending">Processing</span></td>
+                <td><button class="btn-sm">👁 View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANALYTICS & REPORTS PAGE -->
+    <section id="analytics-page" class="dashboard-page">
+      <header class="main-header">
+        <h1 class="page-title">📈 Reports & Analytics</h1>
+        <p class="page-sub">Sales, traffic, and popular plants insights</p>
+      </header>
+
+      <section class="overview-grid big" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+        <div class="stat card">
+          <h3>$12,450</h3>
+          <p>Total Sales</p>
+        </div>
+        <div class="stat card">
+          <h3>2,340</h3>
+          <p>Total Traffic</p>
+        </div>
+        <div class="stat card">
+          <h3>156</h3>
+          <p>Popular Plants</p>
+        </div>
+      </section>
+
+      <div class="card">
+        <h3 style="margin-bottom: 20px; font-size: 1.2rem; color: #1b5e20; font-weight: 700;">🏆 Top Selling Plants</h3>
+        <div style="overflow-x: auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Plant Name</th>
+                <th>Orders</th>
+                <th>Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>#1</strong></td>
+                <td>🌹 Rose</td>
+                <td>145</td>
+                <td>$3,770.55</td>
+              </tr>
+              <tr>
+                <td><strong>#2</strong></td>
+                <td>🌵 Succulent</td>
+                <td>132</td>
+                <td>$2,110.68</td>
+              </tr>
+              <tr>
+                <td><strong>#3</strong></td>
+                <td>🌿 Fern</td>
+                <td>98</td>
+                <td>$1,568.02</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS PAGE -->
+    <section id="settings-page" class="dashboard-page">
+      <header class="main-header">
+        <h1 class="page-title">⚙️ Settings</h1>
+        <p class="page-sub">Configure site rules and payment methods</p>
+      </header>
+
+      <div class="card" style="max-width: 600px;">
+        <h3 style="margin-bottom: 20px; font-size: 1.2rem; color: #1b5e20; font-weight: 700;">Site Configuration</h3>
+        <div style="margin-bottom: 20px;">
+          <label style="font-weight: 600; color: #234a2a;">Commission Rate (%)</label>
+          <input type="number" value="10" style="max-width: 150px;">
+        </div>
+        <div style="margin-bottom: 20px;">
+          <label style="font-weight: 600; color: #234a2a;">Minimum Order Amount ($)</label>
+          <input type="number" value="5" style="max-width: 150px;">
+        </div>
+      </div>
+
+      <div class="card" style="max-width: 600px; margin-top: 20px;">
+        <h3 style="margin-bottom: 20px; font-size: 1.2rem; color: #1b5e20; font-weight: 700;">Payment Methods</h3>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 500;">
+            <input type="checkbox" checked style="cursor: pointer; width: 18px; height: 18px;">
+            💳 Credit Card
+          </label>
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 500;">
+            <input type="checkbox" checked style="cursor: pointer; width: 18px; height: 18px;">
+            🅿️ PayPal
+          </label>
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 500;">
+            <input type="checkbox" style="cursor: pointer; width: 18px; height: 18px;">
+            🏦 Bank Transfer
+          </label>
+        </div>
+      </div>
+
+      <button class="btn" style="margin-top: 20px;">💾 Save Settings</button>
     </section>
   </main>
 
   <script src="script.js"></script>
+  <script src="js/admin.js"></script>
 </body>
 </html>

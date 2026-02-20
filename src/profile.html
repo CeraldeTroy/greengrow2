@@ -13,42 +13,107 @@
   <aside class="sidebar">
     <div class="sidebar-top">
       <div class="avatar">G</div>
-      <div class="who"><div class="hello">Hello</div><div class="name">Geeland <span class="role">/ Admin</span></div></div>
+      <div class="who"><div class="hello">Hello</div><div class="name">Admin <span class="role">/ Profile</span></div></div>
     </div>
     <nav class="side-nav">
-      <a class="nav-link" href="admin.html">Overview</a>
-      <a class="nav-link" href="dashboard.html">Monitoring</a>
-      <a class="nav-link" href="verification.html">Verification Approval</a>
-      <a class="nav-link active" href="profile.html">Personal Info</a>
-      <a class="nav-link" href="password.html">Password Management</a>
-      <a class="nav-link" href="index.html">Logout</a>
+      <a class="nav-link" href="admin.html" data-page="overview">📊 Dashboard Overview</a>
+      <a class="nav-link" href="admin.html" data-page="users">👥 User Management</a>
+      <a class="nav-link" href="admin.html" data-page="listings">🌿 Listing Management</a>
+      <a class="nav-link" href="admin.html" data-page="orders">📦 Order Tracking</a>
+      <a class="nav-link" href="admin.html" data-page="analytics">📈 Reports & Analytics</a>
+      <a class="nav-link" href="admin.html" data-page="settings">⚙️ Settings</a>
+      <a class="nav-link active" href="profile.html">👤 Personal Info</a>
+      <a class="nav-link" href="password.html">🔐 Password</a>
+      <a class="nav-link" href="index.html">🚪 Logout</a>
     </nav>
-    <div class="sidebar-bottom small">Edit profile for admin</div>
+    <div class="sidebar-bottom small">GreenGrow Admin Panel v1.0</div>
   </aside>
 
   <main class="mainwide">
     <header class="main-header">
-      <h1 class="page-title">Personal Info</h1>
-      <p class="page-sub">Edit your profile details</p>
+      <h1 class="page-title">👤 Personal Information</h1>
+      <p class="page-sub">Manage admin and user/seller profile details</p>
     </header>
 
-    <section class="card form-card">
-      <label>Full name
-        <input id="profileName" type="text" />
-      </label>
-      <label>Email
-        <input id="profileEmail" type="email" />
-      </label>
-      <label>Phone
-        <input id="profilePhone" type="text" />
-      </label>
-      <div class="form-row">
-        <button id="saveProfileBtn" class="btn">Save</button>
+    <!-- Tab Navigation -->
+    <div style="display: flex; gap: 0; margin-bottom: 24px; border-bottom: 2px solid #e0e0e0;">
+      <button class="profile-tab active" data-tab="admin" style="padding: 12px 16px; border: none; background: none; cursor: pointer; font-weight: 600; color: #2e7d32; border-bottom: 3px solid #2e7d32; margin-bottom: -2px;">👤 My Profile</button>
+      <button class="profile-tab" data-tab="userinfo" style="padding: 12px 16px; border: none; background: none; cursor: pointer; font-weight: 600; color: #999;">👥 User/Seller Info</button>
+    </div>
+
+    <!-- Admin Profile Section -->
+    <section id="admin-tab" class="profile-section active card" style="max-width: 600px;">
+      <h2 style="color: #2e7d32; margin-bottom: 20px;">Your Admin Profile</h2>
+      <form style="display: flex; flex-direction: column; gap: 16px;">
+        <div>
+          <label style="font-weight: 600; color: #234a2a;">Full Name</label>
+          <input id="profileName" type="text" placeholder="Your full name" />
+        </div>
+        
+        <div>
+          <label style="font-weight: 600; color: #234a2a;">Email Address</label>
+          <input id="profileEmail" type="email" placeholder="Your email address" />
+        </div>
+        
+        <div>
+          <label style="font-weight: 600; color: #234a2a;">Phone Number</label>
+          <input id="profilePhone" type="tel" placeholder="Your phone number" />
+        </div>
+
+        <button id="saveProfileBtn" class="btn" type="submit" style="align-self: flex-start; margin-top: 8px;">💾 Save Changes</button>
+        <div id="profileMsg" class="msg"></div>
+      </form>
+    </section>
+
+    <!-- User/Seller Info Section -->
+    <section id="userinfo-tab" class="profile-section card" style="max-width: 600px; display: none;">
+      <h2 style="color: #2e7d32; margin-bottom: 20px;">View/Edit User & Seller Information</h2>
+      
+      <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+        <input id="userInfoSearchInput" type="text" placeholder="Search by email or name..." style="flex: 1;" />
+        <button id="userInfoSearchBtn" class="btn" style="white-space: nowrap;">🔍 Search</button>
       </div>
-      <div id="profileMsg" class="msg"></div>
+
+      <div id="userInfoSearchResults" style="margin-bottom: 20px;"></div>
+
+      <form id="userInfoForm" style="display: none; flex-direction: column; gap: 16px; margin-top: 20px;">
+        <div style="background: rgba(46, 125, 50, 0.1); padding: 16px; border-radius: 8px; border-left: 4px solid #2e7d32;">
+          <p style="margin: 0; color: #234a2a; font-weight: 600;">Selected Person: <span id="selectedPersonEmail"></span></p>
+          <p style="margin: 8px 0 0 0; color: #666; font-size: 0.9rem;">Type: <span id="selectedPersonType"></span></p>
+        </div>
+
+        <div>
+          <label style="font-weight: 600; color: #234a2a;">Full Name</label>
+          <input id="userInfoName" type="text" placeholder="Full name" />
+        </div>
+        
+        <div>
+          <label style="font-weight: 600; color: #234a2a;">Email Address</label>
+          <input id="userInfoEmail" type="email" placeholder="Email address" disabled style="background: rgba(46, 125, 50, 0.05); cursor: not-allowed;" />
+        </div>
+        
+        <div>
+          <label style="font-weight: 600; color: #234a2a;">Phone Number</label>
+          <input id="userInfoPhone" type="tel" placeholder="Phone number" />
+        </div>
+
+        <div style="background: rgba(52, 168, 224, 0.05); padding: 12px; border-radius: 8px; border-left: 3px solid rgba(52, 168, 224, 0.3);">
+          <p style="font-size: 0.85rem; color: #0284c7; margin: 0;">
+            <strong>ℹ️ Note:</strong> Changes will be saved to this user/seller's profile.
+          </p>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <button id="saveUserInfoBtn" class="btn" type="submit" style="align-self: flex-start;">✓ Save Info</button>
+          <button id="cancelUserInfoBtn" class="btn outline" type="button" style="align-self: flex-start;">Cancel</button>
+        </div>
+
+        <div id="userInfoMsg" class="msg"></div>
+      </form>
     </section>
   </main>
 
   <script src="script.js"></script>
+  <script src="js/admin.js"></script>
 </body>
 </html>

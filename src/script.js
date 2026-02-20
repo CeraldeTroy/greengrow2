@@ -124,7 +124,7 @@ function saveProfile(p){ localStorage.setItem('gg_profile', JSON.stringify(p)); 
 
 /* Ensure some demo data */
 if(!localStorage.getItem('gg_users')) {
-  saveUsers([{ email:'geeland@example.com', password:'admin123', name:'Geeland' }, { email:'buyer1@example.com', password:'x', name:'Buyer One' }]);
+  saveUsers([{ email:'geeland@example.com', password:'admin123', name:'Geeland', active: true }, { email:'buyer1@example.com', password:'x', name:'Buyer One', active: true }]);
 }
 if(!localStorage.getItem('gg_sellerReqs')){
   saveSellerReqs([{ id:'r1', name:'Liam Brown', email:'liam@example.com', status:'pending' }]);
@@ -159,7 +159,7 @@ if (regForm) {
       return;
     }
 
-    users.push({ email, password: pass, name: email.split('@')[0] });
+    users.push({ email, password: pass, name: email.split('@')[0], active: true });
     saveUsers(users);
     toast('Email registered successfully');
     setTimeout(()=> location.href = 'login.html', 900);
@@ -181,6 +181,93 @@ if (loginForm) {
 
     localStorage.setItem('gg_currentUser', email);
     toast('Login successful');
+    setTimeout(()=> location.href = 'admin.html', 600);
+  });
+}
+
+/* Hero page login form handler */
+const heroLoginForm = $('#heroLoginForm');
+if (heroLoginForm) {
+  console.log('Hero login form found and initializing...');
+  const heroUsernameInput = $('#heroUsername');
+  const heroPasswordInput = $('#heroPassword');
+  const heroErrorDiv = $('#heroLoginError');
+  const heroErrorText = $('#heroLoginErrorText');
+
+  // Block whitespace in username
+  if(heroUsernameInput) {
+    heroUsernameInput.addEventListener('input', (e)=>{
+      e.target.value = e.target.value.replace(/\s/g, '');
+    });
+  }
+
+  // Block leading/trailing whitespace in password
+  if(heroPasswordInput) {
+    heroPasswordInput.addEventListener('input', (e)=>{
+      e.target.value = e.target.value.replace(/^\s+|\s+$/g, '');
+    });
+  }
+
+  heroLoginForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    console.log('Login form submitted');
+    
+    const username = heroUsernameInput.value.trim().toLowerCase();
+    const pass = heroPasswordInput.value.trim();
+    
+    console.log('Username:', username, 'Pass length:', pass.length);
+    
+    // Hide error initially
+    if(heroErrorDiv) heroErrorDiv.style.display = 'none';
+    if(heroErrorText) heroErrorText.textContent = '';
+
+    // Validate inputs
+    if(!username || !pass){
+      const msg = '⚠️ Please enter both email/username and password';
+      if(heroErrorText) heroErrorText.textContent = msg;
+      if(heroErrorDiv) heroErrorDiv.style.display = 'block';
+      toast(msg);
+      console.log('Empty fields validation failed');
+      return;
+    }
+
+    const users = readUsers();
+    console.log('Total users:', users.length, users);
+    
+    const user = users.find(u => u.email === username || u.name.toLowerCase() === username);
+    
+    if (!user) { 
+      const msg = '❌ Email or Username is incorrect. No account found.';
+      if(heroErrorText) heroErrorText.textContent = msg;
+      if(heroErrorDiv) heroErrorDiv.style.display = 'block';
+      toast(msg);
+      console.log('User not found');
+      return; 
+    }
+    
+    if(user.active === false){
+      const msg = '❌ Your account has been deactivated. Please contact support.';
+      if(heroErrorText) heroErrorText.textContent = msg;
+      if(heroErrorDiv) heroErrorDiv.style.display = 'block';
+      toast(msg);
+      console.log('User account deactivated');
+      return;
+    }
+    
+    console.log('User found:', user.name, 'Password match:', user.password === pass);
+    
+    if (user.password !== pass) { 
+      const msg = '❌ Password is incorrect. Please check and try again.';
+      if(heroErrorText) heroErrorText.textContent = msg;
+      if(heroErrorDiv) heroErrorDiv.style.display = 'block';
+      toast(msg);
+      console.log('Password mismatch');
+      return; 
+    }
+
+    console.log('Login successful');
+    localStorage.setItem('gg_currentUser', user.email);
+    toast('✓ Login successful');
     setTimeout(()=> location.href = 'admin.html', 600);
   });
 }
@@ -260,7 +347,41 @@ if (path.endsWith('/verification.html')) {
 
 /* Password page logic */
 if (path.endsWith('/password.html')) {
-  $('#adminChangePassBtn')?.addEventListener('click', ()=>{
+  // Tab switching
+  const tabs = $all('.password-tab');
+  const sections = $all('.password-section');
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', ()=>{
+      const tabName = tab.dataset.tab;
+      tabs.forEach(t => { 
+        t.classList.remove('active'); 
+        t.style.color = '#999'; 
+        t.style.borderBottom = 'none'; 
+        t.style.marginBottom = '0'; 
+      });
+      sections.forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none';
+      });
+      
+      tab.classList.add('active');
+      tab.style.color = '#2e7d32';
+      tab.style.borderBottom = '3px solid #2e7d32';
+      tab.style.marginBottom = '-2px';
+      
+      const sectionId = tabName + '-tab';
+      const section = document.getElementById(sectionId);
+      if(section){
+        section.style.display = 'block';
+        section.classList.add('active');
+      }
+    });
+  });
+
+  // Admin password change
+  $('#adminChangePassBtn')?.addEventListener('click', (e)=>{
+    e.preventDefault();
     const a = $('#adminNewPass').value, b = $('#adminNewPassConfirm').value;
     const msg = $('#adminPassMsg');
     if(!a || a.length<6){ toast('Enter 6+ chars', msg); return; }
@@ -270,18 +391,334 @@ if (path.endsWith('/password.html')) {
     if(idx>=0){ users[idx].password = a; saveUsers(users); $('#adminNewPass').value = $('#adminNewPassConfirm').value = ''; toast('Password changed', msg); }
     else toast('Admin user not found', msg);
   });
+
+  // User search functionality
+  let selectedUser = null;
+
+  $('#userSearchBtn')?.addEventListener('click', ()=>{
+    const searchTerm = $('#userSearchInput').value.trim().toLowerCase();
+    const resultDiv = $('#userSearchResults');
+    
+    if(!searchTerm){ toast('Please enter email or name to search'); return; }
+
+    const users = readUsers();
+    const sellers = loadSellerReqs().filter(s => s.status === 'approved');
+    
+    const matchedUsers = users.filter(u => 
+      u.email.toLowerCase().includes(searchTerm) || 
+      (u.name && u.name.toLowerCase().includes(searchTerm))
+    );
+    
+    const matchedSellers = sellers.filter(s => 
+      s.email.toLowerCase().includes(searchTerm) || 
+      s.name.toLowerCase().includes(searchTerm)
+    );
+
+    if(matchedUsers.length === 0 && matchedSellers.length === 0){
+      resultDiv.innerHTML = '<p style="color: #e74c3c; padding: 12px;">No users or sellers found matching "' + searchTerm + '"</p>';
+      return;
+    }
+
+    let html = '<div style="display: flex; flex-direction: column; gap: 8px;">';
+    
+    matchedUsers.forEach(u => {
+      html += `<div class="user-result-item" style="padding: 12px; background: #f5f5f5; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s;" data-email="${u.email}" data-type="user">
+        <strong>${u.name || u.email}</strong>
+        <div style="font-size: 0.85rem; color: #666;">Email: ${u.email}</div>
+        <div style="font-size: 0.75rem; color: #999;">Type: User/Buyer</div>
+      </div>`;
+    });
+
+    matchedSellers.forEach(s => {
+      html += `<div class="user-result-item" style="padding: 12px; background: #f5f5f5; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s;" data-email="${s.email}" data-type="seller">
+        <strong>${s.name}</strong>
+        <div style="font-size: 0.85rem; color: #666;">Email: ${s.email}</div>
+        <div style="font-size: 0.75rem; color: #999;">Type: Seller</div>
+      </div>`;
+    });
+
+    html += '</div>';
+    resultDiv.innerHTML = html;
+
+    // Attach click handlers to results
+    $all('.user-result-item').forEach(item => {
+      item.addEventListener('click', ()=>{
+        const email = item.dataset.email;
+        const type = item.dataset.type;
+        selectedUser = { email, type };
+        
+        // Update UI
+        $('#selectedUserEmail').textContent = email;
+        $('#selectedUserType').textContent = type === 'user' ? 'User/Buyer' : 'Seller';
+        $('#resetPasswordForm').style.display = 'flex';
+        
+        // Highlight selected
+        $all('.user-result-item').forEach(i => i.style.borderColor = 'transparent');
+        item.style.borderColor = '#2e7d32';
+      });
+    });
+  });
+
+  // Reset password form
+  $('#resetPassBtn')?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    
+    if(!selectedUser){ toast('Please select a user', $('#resetPassMsg')); return; }
+    
+    const newPass = $('#resetNewPass').value;
+    const confirmPass = $('#resetConfirmPass').value;
+    const msg = $('#resetPassMsg');
+
+    if(!newPass || newPass.length < 6){ toast('Password must be at least 6 characters', msg); return; }
+    if(newPass !== confirmPass){ toast('Passwords do not match', msg); return; }
+
+    if(selectedUser.type === 'user'){
+      const users = readUsers();
+      const idx = users.findIndex(u => u.email === selectedUser.email);
+      if(idx >= 0){
+        users[idx].password = newPass;
+        saveUsers(users);
+        toast('✓ Password reset for ' + selectedUser.email, msg);
+        setTimeout(()=>{
+          $('#resetNewPass').value = '';
+          $('#resetConfirmPass').value = '';
+          $('#resetPasswordForm').style.display = 'none';
+          $('#userSearchResults').innerHTML = '';
+          $('#userSearchInput').value = '';
+          selectedUser = null;
+        }, 1500);
+      } else {
+        toast('User not found', msg);
+      }
+    } else if(selectedUser.type === 'seller'){
+      const sellers = loadSellerReqs();
+      const idx = sellers.findIndex(s => s.email === selectedUser.email);
+      if(idx >= 0){
+        sellers[idx].password = newPass;
+        saveSellerReqs(sellers);
+        toast('✓ Password reset for ' + selectedUser.email, msg);
+        setTimeout(()=>{
+          $('#resetNewPass').value = '';
+          $('#resetConfirmPass').value = '';
+          $('#resetPasswordForm').style.display = 'none';
+          $('#userSearchResults').innerHTML = '';
+          $('#userSearchInput').value = '';
+          selectedUser = null;
+        }, 1500);
+      } else {
+        toast('Seller not found', msg);
+      }
+    }
+  });
+
+  // Cancel button
+  $('#cancelResetBtn')?.addEventListener('click', ()=>{
+    $('#resetPasswordForm').style.display = 'none';
+    $('#resetNewPass').value = '';
+    $('#resetConfirmPass').value = '';
+    selectedUser = null;
+  });
+
+  // Allow Enter to search
+  $('#userSearchInput')?.addEventListener('keypress', (e)=>{
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      $('#userSearchBtn').click();
+    }
+  });
 }
 
 /* Profile page logic */
 if (path.endsWith('/profile.html')) {
+  // Tab switching
+  const tabs = $all('.profile-tab');
+  const sections = $all('.profile-section');
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', ()=>{
+      const tabName = tab.dataset.tab;
+      tabs.forEach(t => { 
+        t.classList.remove('active'); 
+        t.style.color = '#999'; 
+        t.style.borderBottom = 'none'; 
+        t.style.marginBottom = '0'; 
+      });
+      sections.forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none';
+      });
+      
+      tab.classList.add('active');
+      tab.style.color = '#2e7d32';
+      tab.style.borderBottom = '3px solid #2e7d32';
+      tab.style.marginBottom = '-2px';
+      
+      const sectionId = tabName + '-tab';
+      const section = document.getElementById(sectionId);
+      if(section){
+        section.style.display = 'block';
+        section.classList.add('active');
+      }
+    });
+  });
+
+  // Load admin profile
   const prof = readProfile();
   $('#profileName').value = prof.name || '';
   $('#profileEmail').value = prof.email || '';
   $('#profilePhone').value = prof.phone || '';
-  $('#saveProfileBtn')?.addEventListener('click', ()=>{
+  
+  $('#saveProfileBtn')?.addEventListener('click', (e)=>{
+    e.preventDefault();
     const p = { name: $('#profileName').value.trim(), email: $('#profileEmail').value.trim(), phone: $('#profilePhone').value.trim() };
     if(!p.name || !/\S+@\S+\.\S+/.test(p.email)){ toast('Name and valid email required', $('#profileMsg')); return; }
-    saveProfile(p); toast('Profile saved', $('#profileMsg'));
+    saveProfile(p); toast('✓ Profile saved', $('#profileMsg'));
+  });
+
+  // User/Seller Info Search
+  let selectedPerson = null;
+
+  $('#userInfoSearchBtn')?.addEventListener('click', ()=>{
+    const searchTerm = $('#userInfoSearchInput').value.trim().toLowerCase();
+    const resultDiv = $('#userInfoSearchResults');
+    
+    if(!searchTerm){ toast('Please enter email or name to search'); return; }
+
+    const users = readUsers();
+    const sellers = loadSellerReqs().filter(s => s.status === 'approved');
+    
+    const matchedUsers = users.filter(u => 
+      u.email.toLowerCase().includes(searchTerm) || 
+      (u.name && u.name.toLowerCase().includes(searchTerm))
+    );
+    
+    const matchedSellers = sellers.filter(s => 
+      s.email.toLowerCase().includes(searchTerm) || 
+      s.name.toLowerCase().includes(searchTerm)
+    );
+
+    if(matchedUsers.length === 0 && matchedSellers.length === 0){
+      resultDiv.innerHTML = '<p style="color: #e74c3c; padding: 12px;">No users or sellers found matching "' + searchTerm + '"</p>';
+      return;
+    }
+
+    let html = '<div style="display: flex; flex-direction: column; gap: 8px;">';
+    
+    matchedUsers.forEach(u => {
+      html += `<div class="person-result-item" style="padding: 12px; background: #f5f5f5; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s;" data-email="${u.email}" data-type="user">
+        <strong>${u.name || u.email}</strong>
+        <div style="font-size: 0.85rem; color: #666;">Email: ${u.email}</div>
+        <div style="font-size: 0.75rem; color: #999;">Type: User/Buyer</div>
+      </div>`;
+    });
+
+    matchedSellers.forEach(s => {
+      html += `<div class="person-result-item" style="padding: 12px; background: #f5f5f5; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s;" data-email="${s.email}" data-type="seller">
+        <strong>${s.name}</strong>
+        <div style="font-size: 0.85rem; color: #666;">Email: ${s.email}</div>
+        <div style="font-size: 0.75rem; color: #999;">Type: Seller</div>
+      </div>`;
+    });
+
+    html += '</div>';
+    resultDiv.innerHTML = html;
+
+    // Attach click handlers to results
+    $all('.person-result-item').forEach(item => {
+      item.addEventListener('click', ()=>{
+        const email = item.dataset.email;
+        const type = item.dataset.type;
+        
+        // Find the person and load their info
+        let person = null;
+        if(type === 'user'){
+          person = users.find(u => u.email === email);
+        } else {
+          person = sellers.find(s => s.email === email);
+        }
+
+        if(!person) return;
+
+        selectedPerson = { email, type, ...person };
+        
+        // Update UI
+        $('#selectedPersonEmail').textContent = email;
+        $('#selectedPersonType').textContent = type === 'user' ? 'User/Buyer' : 'Seller';
+        $('#userInfoName').value = person.name || '';
+        $('#userInfoEmail').value = email;
+        $('#userInfoPhone').value = person.phone || '';
+        $('#userInfoForm').style.display = 'flex';
+        
+        // Highlight selected
+        $all('.person-result-item').forEach(i => i.style.borderColor = 'transparent');
+        item.style.borderColor = '#2e7d32';
+      });
+    });
+  });
+
+  // Save user/seller info
+  $('#saveUserInfoBtn')?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    
+    if(!selectedPerson){ toast('Please select a user', $('#userInfoMsg')); return; }
+    
+    const name = $('#userInfoName').value.trim();
+    const phone = $('#userInfoPhone').value.trim();
+    const msg = $('#userInfoMsg');
+
+    if(!name){ toast('Name is required', msg); return; }
+
+    if(selectedPerson.type === 'user'){
+      const users = readUsers();
+      const idx = users.findIndex(u => u.email === selectedPerson.email);
+      if(idx >= 0){
+        users[idx].name = name;
+        users[idx].phone = phone;
+        saveUsers(users);
+        toast('✓ User info saved', msg);
+        setTimeout(()=>{
+          $('#userInfoForm').style.display = 'none';
+          $('#userInfoSearchResults').innerHTML = '';
+          $('#userInfoSearchInput').value = '';
+          selectedPerson = null;
+        }, 1500);
+      } else {
+        toast('User not found', msg);
+      }
+    } else if(selectedPerson.type === 'seller'){
+      const sellers = loadSellerReqs();
+      const idx = sellers.findIndex(s => s.email === selectedPerson.email);
+      if(idx >= 0){
+        sellers[idx].name = name;
+        sellers[idx].phone = phone;
+        saveSellerReqs(sellers);
+        toast('✓ Seller info saved', msg);
+        setTimeout(()=>{
+          $('#userInfoForm').style.display = 'none';
+          $('#userInfoSearchResults').innerHTML = '';
+          $('#userInfoSearchInput').value = '';
+          selectedPerson = null;
+        }, 1500);
+      } else {
+        toast('Seller not found', msg);
+      }
+    }
+  });
+
+  // Cancel button
+  $('#cancelUserInfoBtn')?.addEventListener('click', ()=>{
+    $('#userInfoForm').style.display = 'none';
+    $('#userInfoName').value = '';
+    $('#userInfoPhone').value = '';
+    selectedPerson = null;
+  });
+
+  // Allow Enter to search
+  $('#userInfoSearchInput')?.addEventListener('keypress', (e)=>{
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      $('#userInfoSearchBtn').click();
+    }
   });
 }
 

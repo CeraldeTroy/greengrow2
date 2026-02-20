@@ -13,27 +13,64 @@
   <aside class="sidebar">
     <div class="sidebar-top">
       <div class="avatar">G</div>
-      <div class="who"><div class="hello">Hello</div><div class="name">Geeland <span class="role">/ Admin</span></div></div>
+      <div class="who"><div class="hello">Hello</div><div class="name">Admin <span class="role">/ Verification</span></div></div>
     </div>
     <nav class="side-nav">
-      <a class="nav-link" href="admin.html">Overview</a>
-      <a class="nav-link" href="dashboard.html">Monitoring</a>
-      <a class="nav-link active" href="verification.html">Verification Approval</a>
-      <a class="nav-link" href="profile.html">Personal Info</a>
-      <a class="nav-link" href="password.html">Password Management</a>
-      <a class="nav-link" href="index.html">Logout</a>
+      <a class="nav-link" href="admin.html">📊 Dashboard Overview</a>
+      <a class="nav-link" href="#users">👥 User Management</a>
+      <a class="nav-link" href="#listings">🌿 Listing Management</a>
+      <a class="nav-link" href="#orders">📦 Order Tracking</a>
+      <a class="nav-link" href="#analytics">📈 Reports & Analytics</a>
+      <a class="nav-link active" href="verification.html">🔍 Verification</a>
+      <a class="nav-link" href="profile.html">👤 Personal Info</a>
+      <a class="nav-link" href="password.html">🔐 Password</a>
+      <a class="nav-link" href="index.html">🚪 Logout</a>
     </nav>
-    <div class="sidebar-bottom small">Approve or reject seller requests</div>
+    <div class="sidebar-bottom small">GreenGrow Admin Panel v1.0</div>
   </aside>
 
   <main class="mainwide">
     <header class="main-header">
-      <h1 class="page-title">Seller Verification</h1>
+      <h1 class="page-title">🔍 Seller Verification</h1>
       <p class="page-sub">Review pending requests to become a seller</p>
     </header>
 
     <section class="card">
-      <div id="sellerRequests" class="list"></div>
+      <div style="overflow-x: auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Seller Name</th>
+              <th>Email</th>
+              <th>Business Name</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="sellerRequests">
+            <tr>
+              <td>John Smith</td>
+              <td>john@example.com</td>
+              <td>Smith's Garden</td>
+              <td><span class="badge-pending">Pending</span></td>
+              <td>
+                <button class="btn-sm approved">✓ Approve</button>
+                <button class="btn-sm">✕ Reject</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Jane Doe</td>
+              <td>jane@example.com</td>
+              <td>Nature's Plants</td>
+              <td><span class="badge-pending">Pending</span></td>
+              <td>
+                <button class="btn-sm approved">✓ Approve</button>
+                <button class="btn-sm">✕ Reject</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
   </main>
 

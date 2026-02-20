@@ -308,12 +308,13 @@ body.page-exit {
 .hero-wrapper {
   position: relative;
   z-index: 10;
-  padding: 140px 30px 80px;
+  padding: 80px 30px 60px;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
+}
 }
 
 .hero-card {
